@@ -4,10 +4,10 @@ from proxy_checker.proxy_checker import ProxyChecker
 
 if __name__ == "__main__":
     speedx_instance = SpeedXScraper()
-    proxies_tuple = speedx_instance.scrape(ProxyType.SOCKS4)
+    proxies_tuple = speedx_instance.scrape(ProxyType.SOCKS5)
 
     with open('proxies.txt', 'w') as file:
         checker = ProxyChecker(proxies_tuple)
-        checker.validate_socks4_proxy("https://api.ipify.org?format=json")
+        checker.validate_socks5_proxy("https://httpbin.org/ip")
         for proxy in checker.fetch_proxies():
             file.write(proxy + "\n")

@@ -18,26 +18,41 @@ class ProxyChecker(Checker):
 
     def validate_socks4_proxy(self, url: str):
         socks4_proxies = [proxy_url for proxy_type, proxy_urls in self.proxies if proxy_type ==
-                          ProxyType.SOCKS5 for proxy_url in proxy_urls]
+                          ProxyType.SOCKS4 for proxy_url in proxy_urls]
 
         for proxy in socks4_proxies:
-            with requests.session() as session:
-                try:
-                    response = session.get(url, proxies={
-                                           "http": f"socks4://{proxy}", "https": f"socks4://{proxy}"}, timeout=20)
-
-                    if response.status_code == 200:
-                        print(f"proxy: {proxy} worked response: {
-                              response.content}")
-                        self.filtered_socks4_proxies.append(proxy)
-                    else:
-                        print(f"proxy returned status code: {
-                            response.status_code}")
-                except Exception as e:
-                    print(f"the proxy: {proxy} doesn't work error: {e}")
+            try:
+                proxies = {
+                    'http': f"socks4://{proxy}",
+                    'https': f"socks4://{proxy}"
+                }
+                response = requests.get(
+                    url, proxies=proxies, timeout=1, verify=False)
+                if response.status_code == 200:
+                    self.filtered_socks4_proxies.append(proxy)
+                    response.close()
+            except Exception as e:
+                # TODO implement logger for the exception
+                pass
 
     def validate_socks5_proxy(self, url: str):
-        raise NotImplementedError
+        socks5_proxies = [proxy_url for proxy_type, proxy_urls in self.proxies if proxy_type ==
+                          ProxyType.SOCKS5 for proxy_url in proxy_urls]
+
+        for proxy in socks5_proxies:
+            try:
+                proxies = {
+                    'http': f"socks5://{proxy}",
+                    'https': f"socks5://{proxy}"
+                }
+                response = requests.get(
+                    url, proxies=proxies, timeout=1, verify=False)
+                if response.status_code == 200:
+                    self.filtered_socks4_proxies.append(proxy)
+                    response.close()
+            except Exception as e:
+                # TODO implement logger for the exception
+                pass
 
     def validate_countries(self, countries: List[str]):
         raise NotImplementedError
