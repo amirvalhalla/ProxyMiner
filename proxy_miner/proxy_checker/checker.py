@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from abc import ABC, abstractmethod
-from proxy_enum.proxy_type import ProxyType
+from proxy_miner.proxy_enum.proxy_type import ProxyType
 
 
 class Checker(ABC):

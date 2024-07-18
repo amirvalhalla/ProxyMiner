@@ -1,11 +1,17 @@
-from proxy_enum.proxy_type import ProxyType
-from .checker import Checker
 from typing import List, Tuple
 import requests
+from proxy_miner.proxy_enum.proxy_type import ProxyType
+from .checker import Checker
 
 
 class ProxyChecker(Checker):
-    def __init__(self, proxies: List[Tuple[ProxyType, List[str]]], url: str, timeout: float, ssl_verify: bool) -> None:
+    def __init__(
+        self,
+        proxies: List[Tuple[ProxyType, List[str]]],
+        url: str,
+        timeout: float,
+        ssl_verify: bool,
+    ) -> None:
         super().__init__(proxies)
         self.url = url
         self.timeout = timeout
@@ -27,20 +33,33 @@ class ProxyChecker(Checker):
         return self.filtered_proxies
 
     def _validate(self, pr_type: ProxyType):
-        filtered_proxies = [proxy_url for proxy_type, proxy_urls in self.proxies if proxy_type ==
-                            pr_type for proxy_url in proxy_urls]
+        filtered_proxies = [
+            proxy_url
+            for proxy_type, proxy_urls in self.proxies
+            if proxy_type == pr_type
+            for proxy_url in proxy_urls
+        ]
 
         for proxy in filtered_proxies:
             try:
                 proxies = {
-                    'http': f"{str(pr_type).lower()}://{proxy}",
-                    'https': f"{str(pr_type).lower()}://{proxy}"
+                    "http": f"{str(pr_type).lower()}://{proxy}",
+                    "https": f"{str(pr_type).lower()}://{proxy}",
                 }
                 response = requests.get(
-                    self.url, proxies=proxies, timeout=self.timeout, verify=self.ssl_verify)
+                    self.url,
+                    proxies=proxies,
+                    timeout=self.timeout,
+                    verify=self.ssl_verify,
+                )
                 if response.status_code == 200:
                     self.filtered_proxies.append(proxy)
                     response.close()
-            except Exception as e:
-                # TODO implement logger for the exception
+            except requests.exceptions.Timeout:
+                pass
+            except requests.exceptions.RequestException:
+                # TODO implement logger for the exception # pylint: disable=fixme
+                pass
+            except Exception: # pylint: disable=broad-exception-caught
+                # TODO implement logger for the exception # pylint: disable=fixme
                 pass

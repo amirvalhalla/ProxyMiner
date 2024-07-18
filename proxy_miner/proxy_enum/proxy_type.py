@@ -1,3 +1,4 @@
+# pylint: disable=too-few-public-methods
 class ProxyType:
     HTTP = "http"
     HTTPS = "https"
