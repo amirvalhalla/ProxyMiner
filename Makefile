@@ -4,7 +4,7 @@ devtools:
 
 run:
 	@echo "Running the Proxy Miner! \n"
-	python3 proxy_miner/__main__.py
+	export PYTHONPATH=$(shell pwd) && python3 proxy_miner/__main__.py
 
 
 lint:

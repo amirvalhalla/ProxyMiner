@@ -134,3 +134,7 @@ dmypy.json
 
 # templates
 .github/templates/*
+
+
+# custom files
+proxies.txt

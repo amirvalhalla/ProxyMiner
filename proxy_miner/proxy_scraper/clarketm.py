@@ -6,45 +6,29 @@ from proxy_miner.proxy_enum.proxy_type import ProxyType
 from .scraper import Scraper
 
 
-class SpeedXScraper(Scraper):
+class ClarketmScraper(Scraper):
     __timeout: float
-    __socks4_url: str = (
-        "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks4.txt"
-    )
-    __socks5_url: str = (
-        "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/socks5.txt"
+    __proxy_url: str = (
+        "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt"
     )
 
     def __init__(self, timeout: float) -> None:
-        super().__init__([ProxyType.SOCKS4, ProxyType.SOCKS5])
+        super().__init__(
+            [ProxyType.HTTP, ProxyType.HTTPS, ProxyType.SOCKS4, ProxyType.SOCKS5]
+        )
         self.__timeout = timeout
 
     def scrape(self, proxy_type: ProxyType) -> List[Tuple[ProxyType, List[str]]]:
-        if proxy_type == ProxyType.ALL:
-            socks4_proxies = self.__scrape_socks4()
-            socks5_proxies = self.__scrape_socks5()
+        proxies = self.__scrape(self.__proxy_url)
 
-            result = [
-                (ProxyType.SOCKS4, socks4_proxies),
-                (ProxyType.SOCKS5, socks5_proxies),
-            ]
-            return result
+        result = [
+            (ProxyType.HTTP, proxies),
+            (ProxyType.HTTPS, proxies),
+            (ProxyType.SOCKS4, proxies),
+            (ProxyType.SOCKS5, proxies),
+        ]
 
-        if proxy_type == ProxyType.SOCKS4:
-            socks4_proxies = self.__scrape_socks4()
-            return [(ProxyType.SOCKS4, socks4_proxies)]
-
-        if proxy_type == ProxyType.SOCKS5:
-            socks5_proxies = self.__scrape_socks5()
-            return [(ProxyType.SOCKS5, socks5_proxies)]
-
-        return []
-
-    def __scrape_socks4(self) -> List[str]:
-        return self.__scrape(self.__socks4_url)
-
-    def __scrape_socks5(self) -> List[str]:
-        return self.__scrape(self.__socks5_url)
+        return result
 
     def __scrape(self, url: str) -> List[str]:
         try:
