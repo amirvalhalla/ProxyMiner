@@ -1,4 +1,5 @@
 # ProxyMiner
+[![Lint and format check](https://github.com/amirvalhalla/ProxyMiner/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/amirvalhalla/ProxyMiner/actions/workflows/lint.yml)
 
 ProxyMiner is a powerful tool designed to scrape and collect proxies from various websites. It automates the process of gathering fresh proxy lists and saves them to a file for easy access and use.
 
