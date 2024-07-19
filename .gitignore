@@ -138,3 +138,4 @@ dmypy.json
 
 # custom files
 proxies.txt
+.DS_Store
