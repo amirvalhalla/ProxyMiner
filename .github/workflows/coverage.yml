@@ -10,11 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  testing:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+  coverage:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
