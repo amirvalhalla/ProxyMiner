@@ -28,7 +28,6 @@ class TestProxyChecker(unittest.TestCase):
         checker.validate_http_proxy()
 
         # Assert
-        self.assertTrue(True)
         self.assertIn("http_proxy1", checker.fetch_proxies())
         self.assertIn("http_proxy2", checker.fetch_proxies())
         self.assertNotIn("https_proxy1", checker.fetch_proxies())
