@@ -24,12 +24,11 @@ class TestProxyChecker(unittest.TestCase):
         mock_response.status_code = 200
         mock_get.return_value = mock_response
 
-        print("something")
-
         # Act
         checker.validate_http_proxy()
 
         # Assert
+        self.assertTrue(True)
         self.assertIn("http_proxy1", checker.fetch_proxies())
         self.assertIn("http_proxy2", checker.fetch_proxies())
         self.assertNotIn("https_proxy1", checker.fetch_proxies())
