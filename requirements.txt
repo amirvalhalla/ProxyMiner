@@ -4,6 +4,7 @@ black==24.4.2
 certifi==2024.7.4
 charset-normalizer==3.3.2
 click==8.1.7
+coverage==7.6.0
 dill==0.3.8
 idna==3.7
 isort==5.13.2

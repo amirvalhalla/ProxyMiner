@@ -12,3 +12,8 @@ lint:
 	black .
 	@echo "Linting the Code via Pylint! \n"
 	pylint proxy_miner/
+
+
+unittest:
+	@echo "Running Unittests \n"
+	python3 -m unittest discover tests
