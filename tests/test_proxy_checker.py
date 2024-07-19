@@ -21,6 +21,7 @@ class TestProxyChecker(unittest.TestCase):
 
         # Mock response for successful request
         mock_response = MagicMock()
+
         mock_response.status_code = 200
         mock_get.return_value = mock_response
 
