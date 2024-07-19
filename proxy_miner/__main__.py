@@ -5,8 +5,8 @@ from proxy_miner.proxy_checker.proxy_checker import ProxyChecker
 
 if __name__ == "__main__":
     speedx_instance = SpeedXScraper(10)
-    clarketm_instance = ClarketmScraper(10)
-    proxies_tuple = speedx_instance.scrape(ProxyType.ALL)
+    clarketm_instance = ClarketmScraper(10, ["US"])
+    proxies_tuple = clarketm_instance.scrape(ProxyType.ALL)
 
     with open("proxies.txt", "w", encoding="utf-8") as file:
         checker = ProxyChecker(proxies_tuple, "http://example.org", 1, False)

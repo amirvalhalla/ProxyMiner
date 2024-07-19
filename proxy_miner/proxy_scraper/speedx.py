@@ -20,6 +20,9 @@ class SpeedXScraper(Scraper):
         self.__timeout = timeout
 
     def scrape(self, proxy_type: ProxyType) -> List[Tuple[ProxyType, List[str]]]:
+        if proxy_type not in self._supported_proxies and proxy_type != ProxyType.ALL:
+            return []
+
         if proxy_type == ProxyType.ALL:
             socks4_proxies = self.__scrape_socks4()
             socks5_proxies = self.__scrape_socks5()

@@ -2,33 +2,61 @@
 
 from typing import List, Tuple
 import requests
+import pycountry
 from proxy_miner.proxy_enum.proxy_type import ProxyType
+from proxy_miner.validation.ip import is_valid_ip_port
 from .scraper import Scraper
 
 
 class ClarketmScraper(Scraper):
-    __timeout: float
     __proxy_url: str = (
-        "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt"
+        "https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list.txt"
     )
+    __timeout: float
+    __filter_countries: List[str]
 
-    def __init__(self, timeout: float) -> None:
-        super().__init__(
-            [ProxyType.HTTP, ProxyType.HTTPS, ProxyType.SOCKS4, ProxyType.SOCKS5]
-        )
+    def __init__(self, timeout: float, filter_countries: List[str]) -> None:
+        super().__init__([ProxyType.HTTP, ProxyType.HTTPS])
         self.__timeout = timeout
+        self.__filter_countries = filter_countries
 
     def scrape(self, proxy_type: ProxyType) -> List[Tuple[ProxyType, List[str]]]:
+        if proxy_type not in self._supported_proxies and proxy_type != ProxyType.ALL:
+            return []
+
         proxies = self.__scrape(self.__proxy_url)
+        temp_proxies: List[str] = []
 
-        result = [
-            (ProxyType.HTTP, proxies),
-            (ProxyType.HTTPS, proxies),
-            (ProxyType.SOCKS4, proxies),
-            (ProxyType.SOCKS5, proxies),
-        ]
+        for proxy in proxies:
+            (proxy_addr_port, country_code) = self.__extract_proxy_detail(proxy)
+            if (
+                proxy_addr_port is None
+                or country_code is None
+                or not is_valid_ip_port(proxy_addr_port)
+            ):
+                continue
 
-        return result
+            if self.__filter_countries is not None and len(self.__filter_countries) > 0:
+                country = pycountry.countries.get(alpha_2=country_code)
+                if country is None or (
+                    str(country.alpha_2) not in self.__filter_countries
+                ):
+                    continue
+
+            temp_proxies.append(proxy_addr_port)
+
+        proxies = temp_proxies
+
+        if proxy_type == ProxyType.ALL:
+            return [(ProxyType.HTTP, proxies), (ProxyType.HTTPS, proxies)]
+
+        if proxy_type == ProxyType.HTTP:
+            return [(ProxyType.HTTP, proxies)]
+
+        if proxy_type == ProxyType.HTTPS:
+            return [(ProxyType.HTTPS, proxies)]
+
+        return []
 
     def __scrape(self, url: str) -> List[str]:
         try:
@@ -51,3 +79,13 @@ class ClarketmScraper(Scraper):
             return proxies
         finally:
             response.close()
+
+    def __extract_proxy_detail(self, proxy: str) -> Tuple[str, str]:
+        proxy_details = proxy.split(" ")
+        if len(proxy_details) < 2:
+            return (None, None)
+
+        proxy_addr_port = proxy_details[0]
+        country_code = proxy_details[1].split("-")[0]
+
+        return (proxy_addr_port, country_code)

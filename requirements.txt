@@ -12,6 +12,7 @@ mypy-extensions==1.0.0
 packaging==24.1
 pathspec==0.12.1
 platformdirs==4.2.2
+pycountry==24.6.1
 pylint==3.2.5
 PySocks==1.7.1
 requests==2.32.3
